@@ -330,9 +330,29 @@
         }
       }
 
+      /* ✨ UPDATED ONLY MOBILE SECTION ✨ */
       @media (max-width: 480px) {
         .grid {
-          grid-template-columns: 1fr;
+          grid-template-columns: repeat(
+            2,
+            1fr
+          ); /* Forces 2 columns on mobile */
+          gap: 12px;
+        }
+        .card {
+          padding: 20px 10px; /* Scales down padding so they fit nicely */
+        }
+        .icon-wrapper {
+          font-size: 2.5rem; /* Scales down icon for mobile */
+          margin-bottom: 15px;
+        }
+        .platform-name {
+          font-size: 1rem; /* Scales down text for mobile */
+          margin-bottom: 10px;
+        }
+        .go-button {
+          padding: 8px 12px;
+          font-size: 0.75rem; /* Scales down button */
         }
       }
 
