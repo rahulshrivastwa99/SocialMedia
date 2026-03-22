@@ -1,0 +1,531 @@
+<!doctype html>
+<html lang="en">
+  <head>
+    <meta charset="UTF-8" />
+    <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+    <title>QuickRuit Social Dashboard</title>
+    <link
+      href="https://fonts.googleapis.com/css2?family=Inter:wght@300;400;500;600;700&display=swap"
+      rel="stylesheet"
+    />
+    <link
+      rel="stylesheet"
+      href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css"
+    />
+
+    <style>
+      :root {
+        /* Blue White Theme Colors */
+        --bg-color: #f8fafc;
+        --text-main: #0f172a;
+        --text-muted: #64748b;
+        --primary-blue: #3b82f6;
+        --secondary-blue: #60a5fa;
+        --card-bg: rgba(255, 255, 255, 0.8);
+        --card-border: rgba(255, 255, 255, 1);
+        --shadow-subtle: 0 4px 20px rgba(0, 0, 0, 0.05);
+        --shadow-glow: 0 20px 40px rgba(59, 130, 246, 0.2);
+      }
+
+      * {
+        margin: 0;
+        padding: 0;
+        box-sizing: border-box;
+        font-family: "Inter", sans-serif;
+      }
+
+      body {
+        background-color: var(--bg-color);
+        color: var(--text-main);
+        min-height: 100vh;
+        display: flex;
+        flex-direction: column;
+        align-items: center;
+        overflow-x: hidden;
+        position: relative;
+      }
+
+      /* Background Grid */
+      .bg-grid {
+        position: fixed;
+        top: 0;
+        left: 0;
+        width: 100vw;
+        height: 100vh;
+        background-image:
+          linear-gradient(
+            to right,
+            rgba(59, 130, 246, 0.03) 1px,
+            transparent 1px
+          ),
+          linear-gradient(
+            to bottom,
+            rgba(59, 130, 246, 0.03) 1px,
+            transparent 1px
+          );
+        background-size: 40px 40px;
+        z-index: -2;
+        pointer-events: none;
+      }
+
+      .blob {
+        position: fixed;
+        border-radius: 50%;
+        filter: blur(100px);
+        z-index: -1;
+        opacity: 0.5;
+        pointer-events: none;
+      }
+
+      .blob-1 {
+        top: -100px;
+        left: -100px;
+        width: 500px;
+        height: 500px;
+        background: rgba(59, 130, 246, 0.15);
+      }
+
+      .blob-2 {
+        bottom: -150px;
+        right: -50px;
+        width: 600px;
+        height: 600px;
+        background: rgba(96, 165, 250, 0.15);
+      }
+
+      /* Navbar */
+      nav {
+        width: 100%;
+        max-width: 1200px;
+        padding: 1.5rem 2rem;
+        display: flex;
+        justify-content: space-between;
+        align-items: center;
+        z-index: 10;
+      }
+
+      .nav-logo {
+        font-weight: 700;
+        font-size: 1.2rem;
+        letter-spacing: -0.5px;
+        display: flex;
+        align-items: center;
+        gap: 8px;
+      }
+
+      .nav-logo i {
+        color: var(--primary-blue);
+      }
+
+      .nav-button {
+        background: rgba(59, 130, 246, 0.05);
+        color: var(--primary-blue);
+        border: 1px solid rgba(59, 130, 246, 0.1);
+        padding: 0.5rem 1.2rem;
+        border-radius: 20px;
+        font-weight: 500;
+        font-size: 0.9rem;
+        cursor: pointer;
+        transition: all 0.3s cubic-bezier(0.25, 0.46, 0.45, 0.94);
+      }
+
+      .nav-button:hover {
+        background: var(--primary-blue);
+        color: white;
+        transform: translateY(-2px);
+      }
+
+      /* Main Container */
+      .container {
+        width: 100%;
+        max-width: 1400px;
+        padding: 4rem 2rem;
+        z-index: 1;
+        display: flex;
+        flex-direction: column;
+        align-items: center;
+      }
+
+      /* Header */
+      header {
+        text-align: center;
+        margin-bottom: 4rem;
+        opacity: 0;
+        transform: translateY(20px);
+        animation: fadeUp 0.8s ease forwards;
+        position: relative;
+      }
+
+      .glow-text {
+        position: absolute;
+        top: 50%;
+        left: 50%;
+        transform: translate(-50%, -50%);
+        font-size: 3.5rem;
+        font-weight: 800;
+        color: transparent;
+        text-shadow: 0 0 40px rgba(59, 130, 246, 0.3);
+        z-index: -1;
+        white-space: nowrap;
+      }
+
+      h1 {
+        font-size: clamp(2rem, 5vw, 4rem);
+        font-weight: 800;
+        margin-bottom: 1rem;
+        color: var(--text-main);
+        letter-spacing: -1.5px;
+        line-height: 1.2;
+      }
+
+      h1 span {
+        background: linear-gradient(
+          135deg,
+          var(--primary-blue),
+          var(--secondary-blue)
+        );
+        -webkit-background-clip: text;
+        -webkit-text-fill-color: transparent;
+        background-clip: text;
+      }
+
+      .subtitle {
+        color: var(--text-muted);
+        font-size: 1.2rem;
+        font-weight: 400;
+        max-width: 500px;
+        margin: 0 auto;
+      }
+
+      /* Grid */
+      .grid {
+        display: grid;
+        grid-template-columns: repeat(auto-fit, minmax(300px, 1fr));
+        gap: 25px;
+        width: 100%;
+      }
+
+      /* Cards - Same transitions as first version */
+      .card {
+        background: var(--card-bg);
+        backdrop-filter: blur(20px);
+        -webkit-backdrop-filter: blur(20px);
+        border: 1px solid var(--card-border);
+        border-radius: 20px;
+        padding: 30px 25px;
+        text-align: center;
+        cursor: pointer;
+        transition: all 0.4s cubic-bezier(0.25, 0.46, 0.45, 0.94);
+        position: relative;
+        overflow: hidden;
+        opacity: 0;
+        transform: translateY(50px);
+        display: flex;
+        flex-direction: column;
+        align-items: center;
+        justify-content: center;
+        text-decoration: none;
+        color: var(--text-main);
+      }
+
+      .card::before {
+        content: "";
+        position: absolute;
+        top: 0;
+        left: -100%;
+        width: 100%;
+        height: 100%;
+        background: linear-gradient(
+          90deg,
+          transparent,
+          rgba(255, 255, 255, 0.2),
+          transparent
+        );
+        transition: left 0.6s;
+      }
+
+      .card:hover::before {
+        left: 100%;
+      }
+
+      .card:hover {
+        transform: translateY(-10px) scale(1.02);
+        box-shadow:
+          0 25px 50px rgba(0, 0, 0, 0.15),
+          0 0 30px rgba(59, 130, 246, 0.3);
+        border-color: rgba(59, 130, 246, 0.3);
+        background: rgba(255, 255, 255, 0.95);
+      }
+
+      .icon-wrapper {
+        font-size: 4rem;
+        margin-bottom: 20px;
+        display: block;
+        transition: all 0.3s ease;
+      }
+
+      .card:hover .icon-wrapper {
+        transform: scale(1.1) rotate(5deg);
+        filter: drop-shadow(0 0 20px rgba(59, 130, 246, 0.5));
+      }
+
+      .platform-name {
+        font-size: 1.5rem;
+        font-weight: 600;
+        margin-bottom: 15px;
+        color: var(--text-main);
+      }
+
+      .go-button {
+        background: linear-gradient(
+          135deg,
+          var(--primary-blue),
+          var(--secondary-blue)
+        );
+        color: white;
+        border: none;
+        padding: 12px 30px;
+        border-radius: 50px;
+        font-size: 1rem;
+        font-weight: 600;
+        cursor: pointer;
+        transition: all 0.3s ease;
+        opacity: 0;
+        transform: translateY(10px);
+      }
+
+      .card:hover .go-button {
+        opacity: 1;
+        transform: translateY(0);
+      }
+
+      .go-button:hover {
+        transform: scale(1.05);
+        box-shadow: 0 10px 25px rgba(59, 130, 246, 0.4);
+      }
+
+      /* Animations */
+      @keyframes fadeUp {
+        from {
+          opacity: 0;
+          transform: translateY(30px);
+        }
+        to {
+          opacity: 1;
+          transform: translateY(0);
+        }
+      }
+
+      /* Responsive */
+      @media (max-width: 768px) {
+        .container {
+          padding: 2rem 1.5rem;
+        }
+        .grid {
+          grid-template-columns: repeat(auto-fit, minmax(250px, 1fr));
+          gap: 20px;
+        }
+        .card {
+          padding: 25px 20px;
+        }
+      }
+
+      @media (max-width: 480px) {
+        .grid {
+          grid-template-columns: 1fr;
+        }
+      }
+
+      /* Scroll animations */
+      .card.animate {
+        opacity: 1;
+        transform: translateY(0);
+        transition: all 0.6s cubic-bezier(0.25, 0.46, 0.45, 0.94);
+      }
+    </style>
+  </head>
+  <body>
+    <div class="bg-grid"></div>
+    <div class="blob blob-1"></div>
+    <div class="blob blob-2"></div>
+
+    <nav>
+      <div class="nav-logo"><i class="fa-solid fa-bolt"></i> QuickRuit</div>
+      <button class="nav-button">Social Dashboard</button>
+    </nav>
+
+    <div class="container">
+      <header class="header">
+        <div class="glow-text">QuickRuit Social Dashboard</div>
+        <h1>QuickRuit <span>Social Dashboard</span></h1>
+        <p class="subtitle">
+          Manage all platforms from one centralized, intelligent workspace
+        </p>
+      </header>
+
+      <div class="grid" id="grid"></div>
+    </div>
+
+    <script>
+      // Platform Data with actual SVGs for missing brand icons
+      const platforms = [
+        {
+          name: "Instagram",
+          icon: '<i class="fa-brands fa-instagram"></i>',
+          color: "#E4405F",
+          link: "https://www.instagram.com/quickruit.in",
+        },
+        {
+          name: "LinkedIn",
+          icon: '<i class="fa-brands fa-linkedin-in"></i>',
+          color: "#0077B5",
+          link: "https://www.linkedin.com/company/quickruit-in",
+        },
+        {
+          name: "YouTube",
+          icon: '<i class="fa-brands fa-youtube"></i>',
+          color: "#FF0000",
+          link: "https://www.youtube.com/@QuickRuitAI",
+        },
+        {
+          name: "Medium",
+          icon: '<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24" width="1em" height="1em" fill="currentColor"><path d="M11.96 12c0 3.86-2.58 7-5.77 7s-5.77-3.14-5.77-7 2.58-7 5.77-7 5.77 3.14 5.77 7zm5.56 0c0 3.65-1.28 6.6-2.85 6.6s-2.85-2.95-2.85-6.6 1.28-6.6 2.85-6.6 2.85 2.95 2.85 6.6zm3.32 0c0 3.25-.42 5.88-.93 5.88s-.93-2.63-.93-5.88.42-5.88.93-5.88.93 2.63.93 5.88z"/></svg>',
+          color: "#00D4AA",
+          link: "https://medium.com/@rahulshrivastwa1",
+        },
+        {
+          name: "Twitter (X)",
+          icon: '<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 512 512" width="1em" height="1em" fill="currentColor"><path d="M389.2 48h70.6L305.6 224.2 487 464H345L233.7 318.6 106.5 464H35.8L200.7 275.5 26.8 48H172.4L272.9 180.9 389.2 48zM364.4 421.8h39.1L151.1 88h-42L364.4 421.8z"/></svg>',
+          color: "#000000",
+          link: "https://x.com/QuickruitAI",
+        },
+        {
+          name: "Facebook",
+          icon: '<i class="fa-brands fa-facebook-f"></i>',
+          color: "#1877F2",
+          link: "https://www.facebook.com/quickruit.in",
+        },
+        {
+          name: "ChatGPT",
+          icon: '<svg viewBox="0 0 24 24" width="1em" height="1em" fill="currentColor"><path d="M22.2819 9.8211a5.9847 5.9847 0 0 0-.5157-4.9108 6.0462 6.0462 0 0 0-6.5098-2.9A6.0651 6.0651 0 0 0 4.9807 4.1818a5.9847 5.9847 0 0 0-3.9977 2.9 6.0462 6.0462 0 0 0 .7427 7.0966 5.98 5.98 0 0 0 .511 4.9107 6.051 6.051 0 0 0 6.5146 2.9001A5.9847 5.9847 0 0 0 13.2599 24a6.0557 6.0557 0 0 0 5.7718-4.2058 5.9894 5.9894 0 0 0 3.9977-2.9001 6.0557 6.0557 0 0 0-.7475-7.073zm-9.022 12.108a4.365 4.365 0 0 1-2.7836-1.004l.1118-.066.0287-.015.021-.013 4.286-2.4764a.7317.7317 0 0 0 .366-.6325v-5.467l2.164 1.2514v.0563a4.365 4.365 0 0 1-4.194 8.367zm-7.2354-2.31a4.365 4.365 0 0 1-.8874-2.8277l.11-.0653.0286-.016.021-.012 4.286-2.4764a.7317.7317 0 0 0 .366-.6325v-5.467L7.771 9.4297v.0563A4.365 4.365 0 0 1 6.0245 19.62zm-1.89-6.3156a4.365 4.365 0 0 1 1.8962-2.3235v.13l.0016.0336.0017.024v4.9529a.7317.7317 0 0 0 .366.6325l4.735 2.734-2.164 1.2494-.0478-.027a4.365 4.365 0 0 1-4.7879-6.774zm13.116-2.3235v-.13l-.0017-.0336-.0016-.024V5.845a.7317.7317 0 0 0-.366-.6325l-4.735-2.734 2.164-1.2494.0478.027a4.365 4.365 0 0 1 4.7879 6.774zm1.89 6.3156a4.365 4.365 0 0 1-1.8962 2.3235v-.13l-.0016-.0336-.0017-.024V14.536a.7317.7317 0 0 0-.366-.6325l-4.735-2.734 2.164-1.2494.0478.027a4.365 4.365 0 0 1 4.7879 6.774zm-7.2354 2.31a4.365 4.365 0 0 1 .8874 2.8277l-.11.0653-.0286.016-.021.012-4.286 2.4764a.7317.7317 0 0 0-.366.6325v5.467l2.164-1.2514v-.0563a4.365 4.365 0 0 1-1.7465-10.19zM12 14.199l-2.484-1.4346V9.895L12 8.4604l2.484 1.4346v2.8692L12 14.199z"/></svg>',
+          color: "#10A37F",
+          link: "https://chatgpt.com",
+        },
+        {
+          name: "Gemini",
+          icon: '<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24" width="1em" height="1em" fill="currentColor"><path d="M12 24C11.5333 19.5333 9.06667 17.0667 4.6 16.6C9.06667 16.1333 11.5333 13.6667 12 9.2C12.4667 13.6667 14.9333 16.1333 19.4 16.6C14.9333 17.0667 12.4667 19.5333 12 24ZM18.9 11.1C18.6667 8.86667 17.4333 7.63333 15.2 7.4C17.4333 7.16667 18.6667 5.93333 18.9 3.7C19.1333 5.93333 20.3667 7.16667 22.6 7.4C20.3667 7.63333 19.1333 8.86667 18.9 11.1Z"/></svg>',
+          color: "#4285F4",
+          link: "https://gemini.google.com",
+        },
+      ];
+
+      const grid = document.getElementById("grid");
+
+      // Render Cards
+      platforms.forEach((platform, index) => {
+        const card = document.createElement("div");
+        card.className = "card";
+        card.dataset.url = platform.link;
+        card.innerHTML = `
+                <div class="icon-wrapper" style="color: ${platform.color}">
+                    ${platform.icon}
+                </div>
+                <div class="platform-name">${platform.name}</div>
+                <button class="go-button">Go to ${platform.name}</button>
+            `;
+
+        const delay = 0.1 * index;
+        card.style.animationDelay = `${delay}s`;
+
+        grid.appendChild(card);
+      });
+
+      // Intersection Observer for scroll animations
+      const observerOptions = {
+        threshold: 0.1,
+        rootMargin: "0px 0px -50px 0px",
+      };
+
+      const observer = new IntersectionObserver((entries) => {
+        entries.forEach((entry) => {
+          if (entry.isIntersecting) {
+            entry.target.classList.add("animate");
+          }
+        });
+      }, observerOptions);
+
+      document.querySelectorAll(".card").forEach((card) => {
+        observer.observe(card);
+      });
+
+      // Card click handlers (same as first version)
+      document.querySelectorAll(".card").forEach((card) => {
+        const url = card.dataset.url;
+        const button = card.querySelector(".go-button");
+
+        card.addEventListener("click", (e) => {
+          if (e.target === button) return;
+          if (url && url !== "#") {
+            window.open(url, "_blank");
+          }
+        });
+
+        button.addEventListener("click", (e) => {
+          e.stopPropagation();
+          if (url && url !== "#") {
+            window.open(url, "_blank");
+          }
+        });
+      });
+
+      // Ripple effect (same as first version)
+      document.querySelectorAll(".card").forEach((card) => {
+        card.addEventListener("click", function (e) {
+          const ripple = document.createElement("span");
+          const rect = this.getBoundingClientRect();
+          const size = Math.max(rect.width, rect.height);
+          const x = e.clientX - rect.left - size / 2;
+          const y = e.clientY - rect.top - size / 2;
+
+          ripple.style.cssText = `
+                    position: absolute;
+                    border-radius: 50%;
+                    background: rgba(255,255,255,0.4);
+                    transform: scale(0);
+                    width: ${size}px;
+                    height: ${size}px;
+                    left: ${x}px;
+                    top: ${y}px;
+                    animation: ripple 0.6s linear;
+                    pointer-events: none;
+                `;
+
+          this.appendChild(ripple);
+
+          setTimeout(() => {
+            ripple.remove();
+          }, 600);
+        });
+      });
+
+      // Ripple animation
+      const style = document.createElement("style");
+      style.textContent = `
+            @keyframes ripple {
+                to {
+                    transform: scale(4);
+                    opacity: 0;
+                }
+            }
+        `;
+      document.head.appendChild(style);
+
+      // Parallax effect on grid
+      document.addEventListener("mousemove", (e) => {
+        const xAxis = (window.innerWidth / 2 - e.pageX) / 100;
+        const yAxis = (window.innerHeight / 2 - e.pageY) / 100;
+        grid.style.transform = `translate(${xAxis}px, ${yAxis}px)`;
+      });
+    </script>
+  </body>
+</html>
